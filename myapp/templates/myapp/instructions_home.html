@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% load static %}
+  <title>Study Description</title>
+  <!-- This is the first instruction page shown to all users to introduce them to the study and logistics related to their participation. -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'myapp/instructionformat.css' %}" />
+
+</head>
+
+<body>
+
+  <div class="jumbotron text-center">
+    <h1>Justified Trust Study</h1>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <h3>Purpose</h3>
+      <p>This study aims to understand how veterinarian radiologists work alongside
+        artificial intelligence (AI) systems in diagnostic tasks. 
+      More specifically, we will investigate whether these AI diagnostic tools would be useful in a radiologist's
+        daily decision-making.</p>
+      <!-- <p>The goal of this research is to help veterinarian radiologists manage their burgeoning caseloads and ensure -->
+      <!-- that their unique expertise can be applied to important cases.</p> -->
+    </div>
+    <div class="row">
+      <h3>Study Description</h3>
+      <p>This study consists of 10 phases. In each of these phases, you will be asked to make diagnostic
+        recommendations on 20 clinical cases using X-rays. Each phase will take between 30 minutes and 1 hour.
+      In different phases, you will receive various types of assistance from an artificial intelligence (AI) system.
+        During the study, you will also be asked to reflect on how useful various types of AI information were in your
+        decision-making process. If you would like to review the introductory material, please click 
+        <a target="_blank" href="https://docs.google.com/presentation/d/1bFovogwZAOGbFmKCk4-EH5TJIovh3FAbaZytEACqEeE/edit?usp=sharing">this link<a>.</p>
+    </div>
+    <div class="row">
+      <div style='text-align:right'>
+        <p>Your task will be described in more detail on the following page. </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <form method="POST" id="submit-info">
+        {% csrf_token %}
+        <div>
+          <button class="btn btn-primary float-end" style="float:right;">Next &raquo;
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>

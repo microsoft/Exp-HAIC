@@ -1,14 +1,97 @@
-# Project
+# Overview
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repository contains the Django web app described in the paper *Who Goes
+First? Influences of Human-AI Workflow on Decision Making in Clinical Imaging*
+(add link). In the experiment, we designed a clinical imaging task where
+veterinary radiologists were asked to inspect and identify 33 different findings
+in real X-ray images obtained from historical data, with the help of an AI tool,
+using the interface below. Despite retaining many of the original features, the
+web app used in the experiment has been modified to facilitate the
+implementation of new experimental designs. 
 
-As the maintainer of this project, please make a few updates:
+<img
+src="myapp/static/myapp/images/interface-images/platform_with_predictions.png"
+width="75%"> 
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Our study design
+The current platform is based on a study design consisting of 10 "stages" or
+series of 20 case evaluations each. 
+
+- Stages 1-2 employ a between-subjects design to study the impact of workflow
+configurations on decision-making. 
+- Stages 3-8 employ a within-subjects design, where participants make decisions
+in presence of AI confidence only; AI confidence and saliency maps generated via
+[GradCam](https://openaccess.thecvf.com/content_ICCV_2017/papers/Selvaraju_Grad-CAM_Visual_Explanations_ICCV_2017_paper.pdf);
+AI confidence and [explanations of
+failure](https://ojs.aaai.org/index.php/HCOMP/article/view/13337). 
+- In stage 9, participants can activate the AI help when needed. 
+- In stage 10, participants choose which types of AI help they prefer to see by
+default, and can still activate additional help when needed. 
+
+The results of stages 1-2 are described in the paper. Findings from the
+following stages will be described in upcoming work. The deck of slides
+presented to the radiologists in one of our introductory sessions is available
+at this
+[link](https://docs.google.com/presentation/d/1bFovogwZAOGbFmKCk4-EH5TJIovh3FAbaZytEACqEeE/edit?usp=sharing).
+
+
+### Note
+
+To preserve anonymity of the study participants, information of the years of
+experience on the job and country of origin of our study participants have been
+removed from the data. The X-rays have been replaced by placeholder images.
+
+
+## Setup
+
+For a general introduction to Django, see the [Django
+documentation](https://docs.djangoproject.com). 
+
+### Installation
+
+Make sure you have `pipenv` installed. 
+Then install from Pipfile:
+```
+pipenv install
+```
+And activate the shell:
+```
+pipenv shell
+```
+Finally run the web app:
+```
+python manage.py runserver
+```
+
+If you are deploying the app on an Ubuntu server, you want to follow this
+[excellent
+tutorial](https://tonyj.me/blog/deploy-django-project-ubuntu-server/). 
+
+
+### Importing your own data
+
+The tables present in the current database have been populated using the data in
+`utils` based on the models described in `myapp/models.py`. 
+
+Then
+
+* Potentially remove all tables in the current database and the corresponding
+  migrations.
+* Modify the database tables. Run `python manage.py makemigrations` to create
+  the new tables and then `python manage.py migrate` to apply the tables. 
+* Populate the tables with your data. For example, for our study we ran the
+  commands in [`management`](myapp/management/commands/) which take the data
+  stored in [`utils`](utils/data_for_experiment) as inputs. See [this
+  file](utils/scripts/managementcommands.txt) for the full list of steps. 
+* Populate the app with your images. The images are currently stored in
+  [`static`](myapp/static/myapp/images/). Remember to change all the paths to
+  the images both in the data in the databaseb, in the HTML templates, and in
+  the javascript files. 
+
+
+## Bibliography
+
+If you use our platform, please cite our paper: (add citation)
 
 ## Contributing
 

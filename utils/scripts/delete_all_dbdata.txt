@@ -1,0 +1,11 @@
+python3 manage.py dbshell;
+.tables;
+DELETE FROM myapp_aipreds; 
+DELETE FROM myapp_participant_exp; 
+DELETE FROM myapp_participant_info;
+DELETE FROM myapp_aiinfo_default; 
+DELETE FROM myapp_diagnosis; 
+DELETE FROM myapp_participant_stage_completed; 
+DELETE FROM myapp_survey_aiuseful; 
+DELETE FROM myapp_survey_responses; 
+DELETE FROM myapp_timepage;

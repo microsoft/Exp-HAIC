@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Choice AI information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'myapp/stylesheet.css' %}" /> -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container-fluid" style='width:50%;'>
+        <div class='row'>
+            <h3> What type of AI information should be activated by default? <span style="color:red">(new!)</span> </h3>
+            In stage 9, you had to manually activate the AI information for each case.<br>
+            In this last stage, instead, you can decide which type of AI help you would like to receive by
+            default.<br><br>
+            As a reminder, the types of help that you have seen until now include:
+            <ul>
+                <li>AI's estimated probabilities: The likelihood that the condition is present in the image as estimated by the AI.
+                </li>
+                <li>AI recommendations: Whether the AI's estimated probability is larger than or equal to 60%.</li>
+                <li>Explanations of failure: The AI's accuracy for specific conditions and predictions.</li>
+                <li>AI focus: The heatmap of the regions in the X-ray which have the largest impact on the AI's prediction.
+                </li>
+            </ul>
+        </div>
+        <div class='row' style='padding-top:1cm;'>
+            &#8226; For example, you might want to see activated by default only the AI recommendations. If you choose
+            this option, every time you open
+            a new case the AI recommendations are activated.
+            <div class="imageWrapper" style='padding-bottom:1cm;'><img class="gif" style='width:80%;padding-top:0.5cm;'
+                    src={% static 'myapp\images\interface-images\gif_stage10ex1.gif' %} /></div>
+            &#8226; If you, instead, want all recommendations to be activated by default, every new page would look as
+            follows:
+            <div class="imageWrapper" style='padding-bottom:1cm;'><img class="gif" style='width:80%'
+                    src={% static 'myapp\images\interface-images\gif_stage10ex2.gif' %} /></div>
+        </div>
+        <div class='row' style='padding-top:2cm;'>
+            As before, the AI focus will be available by clicking
+            the corresponding buttons. In addition, if you activate the AI's estimated probabilities or the global explanation of
+            failure,
+            the AI recommendations will be activated as well.<br>
+            <b>What would you like to see activated by default?</b>
+            Note that you will not be allowed to change the default at any point throughout the survey.
+            {% if not default_already_chosen %}
+            <div class="card" style="width:100%; text-align: center;">
+                <div class="card-body">
+                    <div class='container'>
+                        <div class='row bottom-half'>
+                            <div class='col-12'>
+                                <br>AI recommendations
+                                <div style='width:100%'>
+                                    <input class='form-check-input' type='radio' name='airec' id='airec-no'
+                                        form="submit-info" value='no' checked onclick='check_others()'>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='airec-no'>Deactivated</label>
+                                    <input class='form-check-input' type='radio' name='airec' id='airec-yes'
+                                        form="submit-info" value='yes'>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='airec-yes'>Activated</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='row bottom-half'>
+                            <div class='col-12'>
+                                AI estimated probabilities
+                                <div style='width:100%'>
+                                    <input class='form-check-input' type='radio' name='aiconf' id='aiconf-no'
+                                        form="submit-info" value='no' checked>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='aiconf-no'>Deactivated</label>
+                                    <input class='form-check-input' type='radio' name='aiconf' id='aiconf-yes'
+                                        form="submit-info" value='yes' onclick='check_airec()'>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='aiconf-yes'>Activated</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='row bottom-half'>
+                            <div class='col-12'>
+                                Explanations of failure
+                                <div style='width:100%'>
+                                    <input class='form-check-input' type='radio' name='aieof' id='aieof-no'
+                                        form="submit-info" value='no' checked>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='aieof-no'>Deactivated</label>
+                                    <input class='form-check-input' onclick='check_airec()' type='radio' name='aieof'
+                                        id='aieof-yes' form="submit-info" value='yes'>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='aieof-yes'>Activated</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class='row'>
+        <h3> You have already chosen your default settings!</h3>
+        </div>
+        {% endif %}
+
+<div style='padding-top:1cm;'>
+    <form method="POST" id="submit-info" >
+      {% csrf_token %}
+      <button class="btn btn-primary" value='previous'>&laquo; Previous</button>
+      <button class="btn btn-primary float-end" value='next' name='next'>Next &raquo;</button>
+    </form>
+</div>
+    </div>
+
+
+</body>
+<style>
+    .bottom-one {
+        margin-bottom: 1cm;
+    }
+
+    .bottom-half {
+        margin-bottom: 0.5cm;
+    }
+
+    .top-half {
+        margin-top: 0.5cm;
+    }
+
+    .top-one {
+        margin-top: 1cm;
+    }
+</style>
+
+<script>
+    function check_airec() {
+        var airec = document.getElementById('airec-yes')
+
+        if (!airec.checked) {
+            airec.checked = true
+        }
+    }
+
+    function check_others() {
+        var airec = document.getElementById('airec-yes')
+        var aiconf = document.getElementById('aiconf-yes')
+        var aieof = document.getElementById('aieof-yes')
+        if (aiconf.checked || aieof.checked) {
+            airec.checked = true
+        }
+    }
+</script>
+
+</html>

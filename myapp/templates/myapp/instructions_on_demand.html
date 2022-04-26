@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>On demand</title>
+  {% load static %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" type="text/css" href="{% static 'myapp/instructionformat.css' %}" />
+</head>
+
+<body>
+
+  <div class="jumbotron text-center">
+    <!-- <h1>On Demand AI Information</h1> -->
+  </div>
+
+  <div class="container" style='width:60%;'>
+    
+    <div class="row">
+    <h3> Information on demand <span style="color:red">(new!)</span> </h3>
+      <h5>In this stage, all types of information from the AI algorithm will be available on demand. </h5>
+      <p>As before, your task is to identify which of the listed conditions are present in the X-rays.
+        If desired, you will be able to view any of the following pieces of information from the AI diagnostic tool for
+        each condition in every image:
+        <ul>
+          <li> AI recommendation </li>
+          <li> AI confidence </li>
+          <li> AI focus </li>
+          <li> global explanations of failure. </p>
+      </ul>
+      For each case, you can obtain the AI's information
+      <ul>
+        <li>by using the toggle switch present in the navigation bar on the top of the page, for the AI's binary
+          recommendations and</li>
+        <li>once the AI's binary recommendations have been activated, by clicking on the buttons present in each of the
+          conditions in the cards of the different conditions. </li>
+      </ul>
+      See an example below.
+      <div class="imageWrapper"><img class="gif" src={% static 'myapp\images\interface-images\gif_stage9.gif' %} /></div>
+      </p>
+    </div>
+
+
+    <form method="POST">
+      {% csrf_token %}
+      <button class="btn btn-primary" value='previous'>&laquo; Previous</button>
+      <button class="btn btn-primary float-end" value='next' name='next'>Next &raquo;</button>
+    </form>
+
+  </div>
+
+</body>
+
+</html>

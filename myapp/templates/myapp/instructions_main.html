@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% load static %}
+  <title>Instructions</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" type="text/css" href="{% static 'myapp/instructionformat.css' %}" />
+
+</head>
+
+<body>
+
+  <div class="jumbotron text-center">
+    <h1>Task Overview</h1>
+  </div>
+
+  <div class="container" style='width:60%'>
+    <div class="row">
+      <p>In this stage, you will be presented with 20 different tasks. Each task consists of identifying which
+        conditions are present in the X-ray of a dog (the "patient").
+        You will complete these tasks using a platform that we have designed for this study. Here is a screenshot of the
+        interface on the platform.</p>
+      <div class="imageWrapper" title='A screenshot of the platform'>
+        <img class="gif" style='max-width:100%' src={% static 'myapp\images\interface-images\platform.png' %}></div>
+      The web page consists of of three main components. We'll now review each one of them in turn.
+    </div>
+
+    <div style='padding-top:1cm;' class="row">
+      <h3> Interacting with the X-ray</h3>
+      For each of the cases, you will be shown a single X-ray of the patient.
+      The X-ray is presented in the left hand side of the web pages.
+      You will be able to interact with the image by
+      <ul>
+        <li> changing its brightness and contrast.
+        </li>
+        <li> zooming in by double clicking on the region of interest.
+        <li> dragging it around.
+        </li>
+        <li> resetting it to its initial state. </li>
+        <li> making it full screen. </li>
+      </ul>
+      <div class="imageWrapper" title='Interacting with the image: draggint it around'>
+        <img class="gif" style='max-width:100%' src={% static 'myapp\images\interface-images\gif_xray.gif' %}></div>
+    </div>
+
+
+    <div style='padding-top:1cm;' class="row">
+      <h3> Making your diagnosis</h3>
+      In the column in the middle of the web pages, you will find a series of panels stacked on the top of each other.
+      Each panel contains a set of three questions relative to each of 33 conditions. You will be asked to indicate:
+      <ul style="display: flex; flex-direction: column">
+        <li> The likelihood that the condition is present in the X-ray, on a scale from 0% to 100%. </li>
+        <div class="imageWrapper" style="width:50%;margin:0 auto;display:block;"><img class="gif"
+            src={% static 'myapp\images\interface-images\gif_likelihood.gif' %} /></div>
+        <li> Whether you believe that the condition is present in the X-ray (yes or no). A blue checkmark will appear
+          in the navigation bar on the right hand side of the web page next to all conditions for which you selected
+          "Yes".</li>
+        <div class="imageWrapper" style="width:50%;margin:0 auto;display:block;"><img class="gif"
+            src={% static 'myapp\images\interface-images\gif_binary.gif' %} />
+        </div>
+        <li> Whether you would seek a second opinion from another colleague on the assessment (yes or no).
+        </li>
+        <div class="imageWrapper" style="width:50%;margin:0 auto;display:block;"><img class="gif"
+            src={% static 'myapp\images\interface-images\gif_secondopinion.gif' %} />
+        </div>
+      </ul>
+    </div>
+
+    <div class='row'>
+      <div class="card" style="width: 100%;">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted" style="text-align:center;"> </h6>
+          <p class="card-text" style="text-align: justify">For each of the listed conditions, the default values
+            of the questions above are set to "0%", "no", and "no" respectively.
+            Thus, you should only focus on the conditions you suspect may be present in the X-ray.<br>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div style='padding-top:1cm;'>
+        We are particularly interested in your likelihood estimates for cases you are uncertain about.
+        For example, in case of images of poor quality, we expect your and your colleagues' diagnoses to agree in terms
+        of the likelihood
+        estimates (e.g., estimated probabilities of the condition being present all around 50%), but likely not in terms
+        of the binary predictions (condition is present vs. not
+        present).
+      </div>
+    </div>
+
+    <div style='padding-top:1cm;' class="row">
+      <h3> Interacting with the navigation bar</h3>
+      <p>To help you navigate through the conditions more quickly, we have created a navigation bar.
+        This bar, which is available on the right hand side of the web page, contains the 33 conditions grouped by macro
+        categories.
+        To navigate to a certain condition, you can first click on the category and then on the individual condition
+        that will appear.
+        See the GIF below for an example.
+      </p>
+      <div class="imageWrapper"><img class="gif" src={% static 'myapp\images\interface-images\gif_navbar.gif' %} />
+      </div>
+    </div>
+
+    <form method="POST" style='padding-top:1cm;' id="submit-info">
+      {% csrf_token %}
+      <button class="btn btn-primary float-end" style="float:right;">Next &raquo;</button>
+    </form>
+
+  </div>
+
+
+  </div>
+</body>
+
+</html>
+
+
+<style lang="css">
+  a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+  }
+
+  a:hover {
+    background-color: rgb(221, 221, 221);
+    color: black;
+  }
+
+  .round {
+    border-radius: 50%;
+  }
+</style>

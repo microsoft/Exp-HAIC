@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Participant ID</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'myapp/stylesheet.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.js"
+      integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body
+    style="
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 99vw;
+      min-height: 90vh;
+      align-items: center;
+    "
+  >
+    <div class="row">
+      <div class="col-12">
+        <div class="card" style="width: 100%; text-align: center">
+          <div class="card-body">
+            <div class="bottom-one">
+              Please type your participant ID. <br /><span
+                style="font-size: 12px"
+                >For example, type "54" or "93" without the quotes.</span
+              >
+            </div>
+            <form method="POST">
+              {% csrf_token %}
+              <div class="form-group bottom-one">
+                <textarea
+                  id="participant_id"
+                  name="participant_id"
+                  class="form-control"
+                  rows="1"
+                ></textarea>
+              </div>
+              <!-- <select id='participant_id' name='participant_id' class="form-select bottom-one" aria-label="Default select example">
+                                <option selected>(no selection)</option>
+                                {% for i in participant_ids %}
+                                <option value='{{ i }}'>{{ i }}</option>
+                                {% endfor %}
+                            </select> -->
+              <input
+                type="submit"
+                class="btn btn-primary bottom-one"
+                value="Enter the study!"
+              />
+            </form>
+
+            {% if message == 1 %}
+            <div class="row">Please select a valid ID.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <style>
+    .bottom-one {
+      margin-bottom: 0.5cm;
+    }
+  </style>
+</html>

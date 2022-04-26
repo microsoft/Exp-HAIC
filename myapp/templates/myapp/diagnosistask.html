@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Task</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'myapp/stylesheet.css' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script src="https://unpkg.com/panzoom@8.7.3/dist/panzoom.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/26853a15ae.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+</head>
+
+<body style="display: flex; flex-direction: column; width: 99vw; overflow-y:auto; overflow-x:hidden;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h3">X-ray evaluation: case #{{ image_order }}/20</span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-center">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#" data-bs-toggle="modal"
+                            data-bs-target="#InstructionsModal">Instructions</a>
+                    </li>
+                </ul>
+                {% if exp_stage >= 9 and exp_aipresence == 1 %}
+                <ul class="navbar-nav me-auto mb-3 mb-lg-0 navbar-center">
+                    <li class="nav-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="imgactivate-aibinrec">
+                            <label class="form-check-label" for="imgactivate-aibinrec">AI recommendations
+                                &nbsp;&nbsp;&nbsp;</label>
+                        </div>
+                    </li>
+                </ul>
+                <div style='display:none'>
+                    <input type="text" id='airec-timestamp' name='airec-timestamp' form='submit-info' />
+                </div>
+                {% endif %}
+                {% if exp_aipresence == 1 %}
+                <input type="button" class="btn btn-primary" id='open-nextcasequestions' value="Next case"
+                    data-bs-toggle="modal" data-bs-target="#nextcasequestionsModal">
+                </input>
+                {% else %}
+                <form method="POST" id="submit-info" class="d-flex">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary" id='next-case' value="Continue">
+                    </input>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+        </div>
+    </nav>
+
+    <div class='row center-horizontal'>
+        <div class='col-5 image-col' style='height: 93vh'>
+            <div class='col-12'>
+                <div style='width:50%; margin:auto;'>
+                    <p id="imagetype" style='border-style: dotted;'>
+                        Original image </p>
+                </div>
+                <div class='size-main-image' id="img-container" width="50%">
+                    <!-- original image -->
+                    <img id='img' src={% static 'myapp/images/task-images/'|add:image_id|add:'/'|add:image_id|add:'.jpg' %} />
+                </div>
+                <br>
+                <form id='imageEditor'>
+                    <div class='row center-horizontal' style='width:100%'>
+                        <div style='width:50%'>
+                            <label for='br'>Brightness</label>
+                            <input id='br' name='br' type='range' class='image-slider' min=0 max=200 value=100
+                                class='image-slider-filter' />
+                        </div>
+                        <div style='width:50%'>
+                            <label for='ct'>Contrast</label>
+                            <input id='ct' name='ct' type='range' class='image-slider' min=0 max=200 value=100
+                                class='image-slider-filter' />
+                        </div>
+                    </div> <br>
+                    <div class="d-grid gap-1 col-6 mx-auto">
+                        <input type='reset' form='imageEditor' class='btn btn-info' id='reset-image' value='Reset image'
+                            style='margin-bottom:10px' />
+                        <button type='button' class='btn btn-info' data-bs-toggle="modal"
+                            data-bs-target="#imgModal">Full
+                            screen</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <div class='col-5 answer-col' style=' height: 93vh;'>
+            {% for values in image_preds %}
+            <div style='display:none'>
+                <input type="text" id='aifocus-{{ values.condition_short }}-timestamp'
+                    name='aifocus-{{ values.condition_short }}-timestamp' form='submit-info' />
+            </div>
+            {% if exp_stage >= 9 %}
+            <div style='display:none'>
+                <input type="text" id='aieof-{{ values.condition_short }}-timestamp'
+                    name='aieof-{{ values.condition_short }}-timestamp' form='submit-info' />
+            </div>
+            <div style='display:none'>
+                <input type="text" id='aiconf-{{ values.condition_short }}-timestamp'
+                    name='aiconf-{{ values.condition_short }}-timestamp' form='submit-info' />
+            </div>
+            {% endif %}
+
+            <div class='card text-dark border-dark condition-card' id='cond-{{ values.condition_short }}'>
+                <div class='card-header center-horizontal'>
+                    <b><span class='cond-title'
+                            id='cond-title-{{ values.condition_short }}'>{{ values.condition }}</span></b>
+                </div>
+                <div class='card-body'>
+
+
+                    {% if exp_aipresence == 1 %}
+                    {% if exp_stage <= 8 %}
+                    <div class='card' style='width:90%'>
+                        <div class='card-header'>AI recommendation</div>
+                        <div class='card-body'>
+                            <p> <i class="fas fa-chart-bar"></i> The AI estimates that this condition is <u>present</u>
+                                in the image with <u>probability</u>
+                                <span class='aiconf' id='aiconf-{{ values.condition_short }}'
+                                    style="font-weight: bold;">
+                                    {{ values.round_pred }}%</span>
+                            </p>
+                            {% if exp_aism == 1 %}
+                            <div class="d-grid gap-2 d-md-block"
+                                style="margin-bottom: 5px;margin-top:0px; cursor: pointer;"
+                                {% if values.round_pred < 60 %}
+                                title='The button is disabled when the AI predicts that the condition is not present in the image.'
+                                {% endif %}>
+                                <button type='button' class='btn btn-warning hide-grad-img'
+                                    id='aifocus-{{ values.condition_short }}-hide' {% if values.round_pred < 60 %}
+                                    disabled {% endif %}>Hide AI focus</button>
+                                <button type='button' class='btn btn-warning show-grad-img'
+                                    id='aifocus-{{ values.condition_short }}-show' {% if values.round_pred < 60 %}
+                                    disabled {% endif %}>Show AI focus</button>
+                            </div>
+                            {% endif %}
+                            {% if exp_aieof == 1 %}
+                            <div class='bottom-half'>
+                                <span id='aieof-{{ values.condition_short }}'> <i class="fa fa-trophy"
+                                        aria-hidden="true"></i> Overall, the AI's <u>accuracy</u> on cases where it
+                                    predicts that this condition is <u>{% if values.round_pred < 60 %} not
+                                        {% endif %}
+                                        present</u> is
+                                    <span
+                                        style="font-weight: bold;">{{ values.round_accuracy_x_condition_x_binpred }}%</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% elif exp_stage >= 9 and exp_aipresence == 1 %}
+                    <div style="height:0px;" id='card-airec-for-{{ values.condition_short }}'>
+                        <div class='card' style='width:90%'>
+                            <div class='card-header'>AI recommendation</div>
+                            <div class='card-body'>
+                                <div class="d-grid gap-2 d-md-block" style="margin-bottom: 5px;">
+                                    <button type='button' class='btn btn-warning'
+                                        title='The AI estimated probability is the estimated likelihood that the condition is present in the image by the AI model.'
+                                        id='aiconf-activate-{{ values.condition_short }}'>Show AI
+                                        estimated probability</button>
+                                </div>
+                                <div id='aiconf-sentence-{{ values.condition_short }}'
+                                    style='visibility:hidden;height:0px;'>
+                                    <i class="fas fa-chart-bar"></i> The AI estimates that this condition is
+                                    <u>present</u> in the image with <u>probability</u>
+                                    <span class='aiconf' id='aiconf-{{ values.condition_short }}'
+                                        style="font-weight: bold;">
+                                        {{ values.round_pred }}%</span>
+                                </div>
+                                <div class="d-grid gap-2 d-md-block"
+                                    style="margin-bottom: 5px; margin-top:0px; cursor: pointer;"
+                                    {% if values.round_pred < 60 %}
+                                    title='The button is disabled when the AI predicts that the condition is not present in the image.'
+                                    {% endif %}>
+                                    <div id='aifocusdiv-{{ values.condition_short }}'>
+                                        <button type='button' class='btn btn-warning hide-grad-img'
+                                            id='aifocus-{{ values.condition_short }}-hide'
+                                            {% if values.round_pred < 60 %} disabled {% endif %}>Hide AI focus</button>
+                                        <button type='button' class='btn btn-warning show-grad-img'
+                                            id='aifocus-{{ values.condition_short }}-show'
+                                            {% if values.round_pred < 60 %} disabled {% endif %}>Show AI focus</button>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-block">
+                                    <button type='button' class='btn btn-warning'
+                                        title="The explanation of failure represents the share of times that the AI model's prediction is correct."
+                                        id='aieof-activate-{{ values.condition_short }}'>Show explanations of
+                                        failure</button>
+                                </div>
+                                <div class='top-half' id='aieof-sentence-{{ values.condition_short }}'
+                                    style='display:none;height:0px;'>
+                                    <i class="fa fa-trophy" aria-hidden="true"></i> Overall, the AI's <u>accuracy</u> on
+                                    cases where it predicts
+                                    that this condition is <u>{% if values.round_pred < 60 %} not
+                                        {% endif %}
+                                        present</u> is
+                                    <span
+                                        style="font-weight: bold;">{{ values.round_accuracy_x_condition_x_binpred }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    <div class='card' style='width:90%'>
+                        <div class='card-header'>Your diagnosis</div>
+                        <div class='card-body'>
+
+                            <p> What is the likelihood that this condition is present in the X-ray?
+                                <span id="sliderprobvalue-{{ values.condition_short }}" style='font-weight: bold;'>
+                                    {% if values.diag_lklpresent %} {{ values.diag_lklpresent }}% {% else %} 0%
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <div class='row'>
+                                <table class='center-horizontal-table' style="width:90%; table-layout:fixed;">
+                                    <tbody>
+                                        <tr>
+                                            <td class='normal-cell' style='width: 15%; font-size: 14px' colspan='2'>
+                                                Not
+                                                present</td>
+                                            <td class='normal-cell' style='width: 15%; font-size: 14px' colspan='2'>
+                                                Very
+                                                unlikely
+                                            </td>
+                                            <td class='normal-cell' style='width: 15%; font-size: 14px' colspan='2'>
+                                                Unlikely
+                                            </td>
+                                            <td class='normal-cell' style='width: 15%; font-size: 14px' colspan='2'>
+                                                Likely
+                                            </td>
+                                            <td class='normal-cell' style='width: 15%; font-size: 14px' colspan='2'>
+                                                Highly
+                                                likely
+                                            </td>
+                                            <td class='normal-cell' style='width: 15%; font-size: 14px' colspan='2'>
+                                                Present
+                                            </td>
+                                        </tr>
+                                        </tr>
+                                        <tr>
+                                            <td colspan='12' style='vertical-align: top'>
+                                                <div class='input-group'>
+                                                    <input type='range' id='sliderprob-{{ values.condition_short }}'
+                                                        name='sliderprob-{{ values.condition_short }}'
+                                                        class='probability-range' min='0' max='100'
+                                                        value={% if values.diag_lklpresent %}
+                                                        {{ values.diag_lklpresent }} {% else %} 0 {% endif %}
+                                                        form="submit-info" step='10' style='width: 100%;'
+                                                        onInput='$("#sliderprobvalue-{{ values.condition_short }}").html($(this).val() + "%")' />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            Do you think this condition is present in the X-ray?
+                            <div class='row'>
+                                <div style='width:100%' class='center-horizontal'>
+                                    <input class='form-check-input condpresent-no' type='radio'
+                                        name='condpresent-{{ values.condition_short }}'
+                                        id='condpresent-{{ values.condition_short }}-no' form="submit-info" value='no'
+                                        checked>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='answer-present-{{ values.condition_short }}-no'>No</label>
+                                    <input class='form-check-input condpresent-yes' type='radio'
+                                        name='condpresent-{{ values.condition_short }}'
+                                        id='condpresent-{{ values.condition_short }}-yes' form="submit-info" value='yes'
+                                        {{ values.diag_condpresent }}>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='answer-present-{{ values.condition_short }}-yes'>Yes</label>
+                                </div>
+                            </div>
+
+                            <br>
+                            Would you like to seek a second opinion?
+                            <div class=' row'>
+                                <div style='width:100%' class='center-horizontal'>
+                                    <input class='form-check-input' type='radio'
+                                        name='secondopinion-{{ values.condition_short }}'
+                                        id='secondopinion-{{ values.condition_short }}-no' value='no' form="submit-info"
+                                        checked>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='secondopinion-{{ values.condition_short }}-no'>No</label>
+                                    <input class='form-check-input' type='radio'
+                                        name='secondopinion-{{ values.condition_short }}'
+                                        id='secondopinion-{{ values.condition_short }}-yes' {{ values.diag_secop }}
+                                        form="submit-info" value='yes'>
+                                    <label class='form-check-label' style='font-weight:normal;'
+                                        for='secondopinion-{{ values.condition_short }}-yes'>Yes</label>
+                                </div>
+                            </div>
+
+                            <div id='qaifocus-{{ values.condition_short }}' style='display:none'>
+                                <br>
+                                Do you think that the AI focus was useful?
+                                <div class='row'>
+                                    <div style='width:100%' class='center-horizontal'>
+                                        <input class='form-check-input' type='radio'
+                                            name='qaifocus-{{ values.condition_short }}'
+                                            id='qaifocus-{{ values.condition_short }}-no' value='no' form="submit-info">
+                                        <label class='form-check-label' style='font-weight:normal;'
+                                            for='qaifocus-{{ values.condition_short }}-no'>No</label>
+                                        <input class='form-check-input' type='radio'
+                                            name='qaifocus-{{ values.condition_short }}'
+                                            id='qaifocus-{{ values.condition_short }}-yes' form="submit-info"
+                                            value='yes'>
+                                        <label class='form-check-label' style='font-weight:normal;'
+                                            for='qaifocus-{{ values.condition_short }}-yes'>Yes</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class='col-2' class='navbar-col' style="resize: vertical;">
+            <nav class='navbar' style='height: 93vh; overflow: scroll;'>
+                <ul style='padding-left:0rem;position:absolute;top:0px;' class='col-12  '>
+                    {% for grouping in possible_groupings %}
+                    <li class="nav-item" style='text-align:left;'>
+                        <a data-bs-toggle="collapse" href="#rnavbar-{{ grouping|cut:" " }}" role="button"
+                            aria-expanded="false" aria-controls="rnavbar-{{ grouping }}"
+                            onclick='back_to_original_image(image_id, "{{ grouping }}")'>
+                            <i class="fas fa-exclamation-triangle" id='aibinrec-icon-grouping-{{ grouping }}'
+                                style="font-size: 14px;color:red; display:none"></i>
+                            <span id='grouping-category-header-{{ grouping }}' style="font-size: 12px;">
+                                {{ grouping }}
+                            </span>
+                            <div id='plus-icon-{{ grouping|cut:" " }}' style='float:right;'>
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div id='minus-icon-{{ grouping|cut:" " }}' style='display:none;float:right;'>
+                                <i class="fas fa-minus"></i>
+                            </div>
+                        </a>
+                        <div class="collapse" id="rnavbar-{{ grouping|cut:" " }}">
+                            <ul style='padding-left:0rem;'>
+                                {% for values in image_preds %}
+                                {% if values.grouping == grouping %}
+                                <li class="nav-item" style='text-align:left;'><a
+                                        href="#cond-{{ values.condition_short }}"
+                                        onclick='back_to_original_image(image_id, "no-group")'>
+                                        <i class="fas fa-exclamation-triangle"
+                                            id='aibinrec-icon-condition-{{ values.condition_short }}'
+                                            style="color:red; display:none; font-size: 10px;"></i>
+                                        <i id="human-icon-condition-{{ condition_short }}" class="fas fa-check"
+                                            style="color:blue; font-size: 10px; display:none;"></i>
+                                        <span id='navitem-{{ values.condition_short }}'
+                                            style='color:black; font-size: 10px;'>
+                                            {{ values.condition }} </span>
+                                    </a> </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="modal fade" id="InstructionsModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Instructions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Terminology:
+                    <ul style='list-style-type: circle;'>
+                        <li> AI's estimated probability: The probability that a given condition is present in
+                            the X-ray, according to the AI diagnostic tool. As a reminder, this is not a real
+                            probability: The tool might predict
+                            that some condition is present with probability 100%, but be correct in 60% of the cases!
+                        </li>
+                        <li> AI's recommendation: When the AI's estimated probability is equal to or larger than 60% for
+                            a certain
+                            condition, the condition gets flagged in the navigation bar on the right (indicated by an
+                            icon with a red triangle).</li>
+                        {% if exp_aism == 1 or exp_stage >= 9 %} <li> AI focus: The pixels with the brightest colors
+                            (red) in
+                            the image correspond to those that have the greatest impact on the prediction made by the AI
+                            diagnostic tool. </li> {% endif %}
+                        {% if exp_aieof == 1 or exp_stage >= 9 %} <li> Explanation of failure: The average accuracy of
+                            the AI diagnostic tool's (binary) predictions. Equivalently, the share of cases for which
+                            the prediction that the condition is present or not turns out to be correct.</li>
+                        {% endif %}
+                    </ul>
+                    <div style='padding-bottom:1cm;'>
+                        Task: Your task is to identify which conditions are present in the X-ray. More specifically, you
+                        are
+                        asked to
+                        <ul style='list-style-type: circle;'>
+                            <li> estimate the likelihood that the condition is present in the X-ray. For example, you
+                                might
+                                be unsure of whether the condition
+                                is present and thus estimate the likelihood to be 60%.
+                            </li>
+                            <li> assess whether the condition is present or not.</li>
+                            <li> decide whether you would like to elicit the opinion of another colleague on the case.
+                            </li>
+                        </ul>
+                    </div>
+                    Once you are done with your assessment, please click the {% if exp_aipresence == 1 %} "Next case"
+                    {% else %} "Continue" {% endif %}
+                    button in the top right corner of the web
+                    page
+                    to {% if exp_aipresence == 1 %} proceed to the following case. {% else %} observe the AI's
+                    recommendations and possibly revise your diagnosis. {% endif %}
+                    Remember that you are not allowed to revise your past diagnoses.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary">
+                        <a target="_blank" href="{% url 'instructions_main' participant_id exp_stage %}"
+                            style='text-decoration:none; color:white'>
+                            Open the full set of instructions </a></button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if exp_aipresence == 1 %}
+    <div class="modal fade" id="nextcasequestionsModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align: center;">
+                    <h6> Please answer the following question. </h6>
+                    Did the AI help you in your diagnosis?
+                    <div class='row'>
+                        <div style='width:100%' class='center-horizontal'>
+                            <input class='form-check-input' type='radio' name='qtool-help' id='qtool-help-no' value='no'
+                                form="submit-info" required>
+                            <label class='form-check-label' style='font-weight:normal;' for='qtool-help-no'>No</label>
+                            <input class='form-check-input' type='radio' name='qtool-help' id='qtool-help-yes'
+                                form="submit-info" value='yes'>
+                            <label class='form-check-label' style='font-weight:normal;' for='qtool-help-yes'>Yes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form method="POST" id="submit-info" class="d-flex">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" id='next-case' value="Next case">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+
+    <div id="imgModal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" role="document">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Full screen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container" align="center">
+                        <div class="row">
+                            <div class='col-12'>
+                                <div class='size-main-image'>
+                                    <img id='img-modal' style='max-height:100vh;max-width:100vw;'
+                                        src={% static 'myapp/images/task-images/'|add:image_id|add:'/'|add:image_id|add:'.jpg' %} />
+                                </div>
+                            </div>
+                            <form id='imageEditor-modal'>
+                                <div class='row center-horizontal'>
+                                    <div style='width:50%'>
+                                        <label for='br-modal'>Brightness</label>
+                                        <input id='br-modal' style='font-weight:normal;' type='range'
+                                            class='image-slider' min=0 max=200 value=100 />
+                                    </div>
+                                    <div style='width:50%'>
+                                        <label for='ct-modal'>Contrast</label>
+                                        <input id='ct-modal' style='font-weight:normal;' type='range'
+                                            class='image-slider' min=0 max=200 value=100
+                                            class='imagemodal-slider-filter' />
+                                    </div>
+                                </div>
+                                <div class='row center-horizontal' style='width:100%'>
+                                    <input type='reset' form='imageEditor-modal' class='btn btn-info'
+                                        id='reset-image-modal' value='Reset image' />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ image_id|json_script:"image_id" }}
+    {{ exp_stage|json_script:"exp_stage" }}
+    {{ exp_aipresence|json_script:"exp_aipresence" }}
+    {{ default_airec|json_script:"default_airec" }}
+    {{ default_aiconf|json_script:"default_aiconf" }}
+    {{ default_aieof|json_script:"default_aieof" }}
+    <script type="text/javascript" src="{% static 'myapp/app.js' %}"></script>
+</body>
+
+</html>

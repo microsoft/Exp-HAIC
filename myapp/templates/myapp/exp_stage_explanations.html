@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Task</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'myapp/stylesheet.css' %}" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+</head>
+
+<body
+    style="display:flex; flex-direction: column; justify-content:center; width: 99vw; min-height: 90vh; align-items: center">
+
+    <div class='row'>
+        <div class='col-12'>
+            <div class="card" style="width:100%; text-align: center;">
+                <div class="card-body">
+                    <b>
+                    {% if exp_stage == 1 %}
+                    <span> Our data indicate that you have just entered the study for the first time (or that you did not complete the tasks in the first phase the study). </span>
+                    {% else %}
+                    <span> Our data indicate that you (ID={{ participant_id }}) today you will participate in phase {{ exp_stage }} of the study.<br>
+                        Congratulations! </span>
+                    {% endif %}
+                </b>
+                    <br><br> <b>If this information seems correct, please proceed with the rest of the survey by clicking the button below.</b>
+                    <br><br>
+                <form id='all_is_ok' method='POST'>
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary bottom-one" value='Read the instructions'>
+                </form>
+                If the information is not correct, please check again your ID and restart the survey. <br> 
+                If that does not work, please let us know about this bug at <a href = "mailto: t-rfogliato@microsoft.com">t-rfogliato@microsoft.com</a>.
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+    {% if message == 1 %}
+    <div class='row'>
+        Please select a valid ID.
+    </div>
+    {% endif %}
+
+</body>
+<style>
+    .bottom-one {
+        margin-bottom: 1cm;
+    }
+</style>
+
+</html>
