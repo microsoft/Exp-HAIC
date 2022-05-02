@@ -62,6 +62,11 @@ Finally run the web app:
 ```
 python manage.py runserver
 ```
+You will be able to see the starting page for the experimental platform at:
+```
+http://127.0.0.1:8000/myapp/diagnosistask/ 
+```
+All the data collected by the platform will be stored in the db.sqlite3 file. The initial file in this repository contains some sample user data to illustrate the platform usage. For example, you can try to use the platform with user ids such as '1' or '12'.  
 
 If you are deploying the app on an Ubuntu server, you want to follow this
 [excellent
