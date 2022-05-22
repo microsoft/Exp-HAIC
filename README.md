@@ -100,7 +100,7 @@ If you use our platform, please cite our paper:
 ```
 @article{fogliato2022who, 
         title={Who Goes First? Influences of Human-AI Workflow on Decision Making in Clinical Imaging}, 
-        author={Fogliato, Riccardo and Chappidi, Shreya and Lungren, Matthew and Fitzke, Michael and Parkinson, Mark and Wilson, Diane and Fisher, Paul and Horvitz Eric and Inkpen, Kori and Nushi, Besmira},
+        author={Fogliato, Riccardo and Chappidi, Shreya and Lungren, Matthew and Fitzke, Michael and Parkinson, Mark and Wilson, Diane and Fisher, Paul and Horvitz, Eric and Inkpen, Kori and Nushi, Besmira},
         journal={arXiv preprint arXiv:2205.09696},
         year={2022}
 } 
