@@ -1,13 +1,13 @@
 # Overview
 
-This repository contains the Django web app described in the paper *Who Goes
-First? Influences of Human-AI Workflow on Decision Making in Clinical Imaging*
-(add link). In the experiment, we designed a clinical imaging task where
-veterinary radiologists were asked to inspect and identify 33 different findings
-in real X-ray images obtained from historical data, with the help of an AI tool,
-using the interface below. Despite retaining many of the original features, the
-web app used in the experiment has been modified to facilitate the
-implementation of new experimental designs. 
+This repository contains the Django web app described in the paper [*Who Goes
+First? Influences of Human-AI Workflow on Decision Making in Clinical
+Imaging*](https://arxiv.org/abs/2205.09696). In the experiment, we designed a
+clinical imaging task where veterinary radiologists were asked to inspect and
+identify 33 different findings in real X-ray images obtained from historical
+data, with the help of an AI tool, using the interface below. Despite retaining
+many of the original features, the web app used in the experiment has been
+modified to facilitate the implementation of new experimental designs. 
 
 <img
 src="myapp/static/myapp/images/interface-images/platform_with_predictions.png"
@@ -96,7 +96,16 @@ Then
 
 ## Bibliography
 
-If you use our platform, please cite our paper: (add citation)
+If you use our platform, please cite our paper: 
+```
+@article{fogliato2022who, 
+        title={Who Goes First? Influences of Human-AI Workflow on Decision Making in Clinical Imaging}, 
+        author={Fogliato, Riccardo and Chappidi, Shreya and Lungren, Matthew and Fitzke, Michael and Parkinson, Mark and Wilson, Diane and Fisher, Paul and Horvitz Eric and Inkpen, Kori and Nushi, Besmira},
+        journal={arXiv preprint arXiv:2205.09696},
+        year={2022}
+} 
+```
+
 
 ## Contributing
 
